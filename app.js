@@ -52,7 +52,7 @@ const getWeatherData = (lat, lng) => {
             forecast: forecast.summary,
             time: new Date(forecast.time * 1000),
         };
-    })
+    });
 };
 
 // localhost:9000/weather
