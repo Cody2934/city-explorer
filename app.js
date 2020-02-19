@@ -5,6 +5,7 @@ const cors = require('cors');
 const app = express();
 // const request = require('superagent');
 
+// need cors cause of magic
 app.use(cors());
 // localhost:9000/ returns 'Hello World!'
 // request not using yet
@@ -36,7 +37,7 @@ app.get('/location', (request, respond) => {
 });
 
 const getWeatherData = (lat, lng) => {
-    return weather.daily.data.map(forcast => {
+    return weather.daily.data.map(forecast => {
         return {
             forecast: forecast.summary,
             time: new Date(forecast.time * 1000),
