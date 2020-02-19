@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
-  "scripts": {
+  "directories": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -15,8 +15,14 @@
   "bugs": {
     "url": "https://github.com/Cody2934/city-explorer/issues"
   },
+  "scripts": {
+    "test": "jest --detectOpenHandles",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
   "homepage": "https://github.com/Cody2934/city-explorer#readme",
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "jest": "^25.1.0",
     "supertest": "^4.0.2"
