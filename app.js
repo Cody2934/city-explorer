@@ -82,7 +82,7 @@ app.get('/events', async(req, res, next) => {
 });
 
 // YELP
-app.get('/reviews', async(req, res) => {
+app.get('/reviews', async(req, res, next) => {
     try {
         const yelp = await request
             .get(`https://api.yelp.com/v3/businesses/search?term=restaurants&latitude=${lat}&longitude=${lng}`)
