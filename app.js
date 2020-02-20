@@ -105,11 +105,11 @@ app.get('/reviews', async(req, res, next) => {
 // TRAILS
 app.get('/hiking', async(req, res, next) => {
     try {
-        const trail = await request.get(`https://www.hikingproject.com/data/get-trails?lat=${lat}&lon=${lng}&maxDistance=10&key=${process.env.HIKING_API_KEY}`)
+        const trail = await request.get(`https://www.hikingproject.com/data/get-trails?lat=${lat}&lon=${lng}&maxDistance=10&key=${process.env.HIKING_API_KEY}`);
         const hikingStuff = trail.body.trails.map(trail => {
             return {
                 name: trail.name,
-                location: trail.length,
+                location: trail.location,
                 length: trail.length,
                 stars: trail.stars,
                 star_votes: trail.starVotes,
