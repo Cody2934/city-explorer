@@ -45,7 +45,7 @@ app.get('/location', async(req, respond, next) => {
     }
 });
 
-
+//WEATHER
 const getWeatherData = async(lat, lng) => {
 
     const weather = await request.get(`https://api.darksky.net/forecast/${process.env.DARKSKY_API_KEY}/${lat},${lng}`);
@@ -58,12 +58,56 @@ const getWeatherData = async(lat, lng) => {
     });
 };
 
-// localhost:9000/weather
+//WEATHER
 app.get('/weather', async(req, res, next) => {
     try {
-        const portlandWeather = getWeatherData(lat, lng);
+        const portlandWeather = await getWeatherData(lat, lng);
 
         res.json(portlandWeather);
+    } catch (err) {
+        next(err);
+    }
+});
+
+//EVENTFUL
+const getEventData = async(lat, lng) => {
+
+    const events = await request.get(`EVENT URL`);
+
+    return {
+        link: ,
+        name: ,
+        event_date: ,
+        summary: ,
+    };
+}
+
+// YELP
+app.get('/reviews', async (req, res) => {
+    try {
+        const yelp = await request
+            .get(`https://api.yelp.com/v3/businesses/search?term=restaurants&latitude=${lat}&longitude=${lng}`)
+            .set('Authorization', `Bearer ${process.env.YELP_API_KEY}`);
+        const yelpStuff = yelp.body.businesses.map(business => {
+            return {
+                name: business.name,
+                image: business.image_url,
+                price: business.price,
+                rating: business.rating,
+                url: business.url,
+            };
+        });
+        res.json(yelpStuff);
+    } catch (err) {
+        res.status(500).send('Sorry something went wrong, please try again');
+    }
+});
+
+app.get('/events', async(req, res, next) => {
+    try {
+        const
+
+        res.json();
     } catch (err) {
         next(err);
     }
