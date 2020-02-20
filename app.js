@@ -21,19 +21,13 @@ let lng;
 // setting cityData to data.results 0 index from our data js file
 app.get('/location', async(req, respond, next) => {
     try {
-
         const location = req.query.search;
-
         const URL = `https://us1.locationiq.com/v1/search.php?key=${process.env.GEOCODE_API_KEY}&q=${location}&format=json`;
-        
         const cityData = await request.get(URL);
-
         const firstResult = cityData.body[0];
-
         // update the global state of lat and lng so it's accessible in other routes
         lat = firstResult.lat;
         lng = firstResult.lon;
-
         //respond with the data from js file 
         respond.json({
             formatted_query: firstResult.display_name,
@@ -47,9 +41,7 @@ app.get('/location', async(req, respond, next) => {
 
 //WEATHER
 const getWeatherData = async(lat, lng) => {
-
     const weather = await request.get(`https://api.darksky.net/forecast/${process.env.DARKSKY_API_KEY}/${lat},${lng}`);
-
     return weather.body.daily.data.map(forecast => {
         return {
             forecast: forecast.summary,
@@ -57,12 +49,10 @@ const getWeatherData = async(lat, lng) => {
         };
     });
 };
-
 //WEATHER
 app.get('/weather', async(req, res, next) => {
     try {
         const portlandWeather = await getWeatherData(lat, lng);
-
         res.json(portlandWeather);
     } catch (err) {
         next(err);
@@ -70,20 +60,29 @@ app.get('/weather', async(req, res, next) => {
 });
 
 //EVENTFUL
-const getEventData = async(lat, lng) => {
-
-    const events = await request.get(`EVENT URL`);
-
-    return {
-        link: ,
-        name: ,
-        event_date: ,
-        summary: ,
-    };
-}
+app.get('/events', async(req, res, next) => {
+    try {
+        const events = await request.get(`http://api.eventful.com/json/events/search?app_key=${process.env.EVENT_API_KEY}&where=${lat},${lng}&within=25&page_size=20&page_number=1`);
+        // using .text from the data. changing text data from xml to json
+        const event = JSON.parse(events.text);
+        // map through all events and grab only what I want
+        const eventfulStuff = event.events.event.map(event => {
+            return {
+                link: event.url,
+                name: event.title,
+                event_date: event.start_time,
+                summary: event.description,
+            };
+        });
+            //respond with JSON object containing data I want.
+        res.json(eventfulStuff);
+    } catch (err) {
+        next(err);
+    }
+});
 
 // YELP
-app.get('/reviews', async (req, res) => {
+app.get('/reviews', async(req, res) => {
     try {
         const yelp = await request
             .get(`https://api.yelp.com/v3/businesses/search?term=restaurants&latitude=${lat}&longitude=${lng}`)
@@ -99,15 +98,29 @@ app.get('/reviews', async (req, res) => {
         });
         res.json(yelpStuff);
     } catch (err) {
-        res.status(500).send('Sorry something went wrong, please try again');
+        next(err);
     }
 });
 
-app.get('/events', async(req, res, next) => {
+// TRAILS
+app.get('/hiking', async(req, res, next) => {
     try {
-        const
-
-        res.json();
+        const trail = await request.get(`https://www.hikingproject.com/data/get-trails?lat=${lat}&lon=${lng}&maxDistance=10&key=${process.env.HIKING_API_KEY}`)
+        const hikingStuff = trail.hiking.map(trail => {
+            return {
+                name: trail.name,
+                location: trail.length,
+                length: trail.length,
+                stars: trail.stars,
+                star_votes: trail.starVotes,
+                summary: trail.summary,
+                trail_url: trail.url,
+                conditions: trail.conditionStatus,
+                condition_date: trail.conditionDate.substring(0, 10),
+                condition_time: trail.conditionDate.substring(10),
+            };
+        });
+        res.json(hikingStuff);
     } catch (err) {
         next(err);
     }
